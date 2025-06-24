@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Paramètres de jeu</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #eef;
+      text-align: center;
+      padding: 2em;
+    }
+    label, select {
+      font-size: 1.2em;
+      margin: 1em;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 0.6em 1.2em;
+      margin-top: 2em;
+      border: none;
+      border-radius: 8px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Paramètres de la partie</h1>
+  <label for="scoreLimit">Jouer jusqu'à :</label>
+  <select id="scoreLimit">
+    <option value="1">1 point</option>
+    <option value="3" selected>3 points</option>
+    <option value="5">5 points</option>
+  </select>
+  <br>
+  <button onclick="startGame()">Commencer la partie</button>
+
+  <script>
+    function startGame() {
+      const limit = document.getElementById('scoreLimit').value;
+      localStorage.setItem('scoreLimit', limit);
+      window.location.href = 'vsai.html';
+    }
+  </script>
+</body>
+</html>

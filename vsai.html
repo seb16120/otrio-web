@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Otrio - Mode Local</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 10px;
+    }
+    .cell {
+      background: white;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+    }
+    .ring {
+      position: absolute;
+      border: 4px solid;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      left: 50%;
+      top: 50%;
+    }
+    .small { width: 30%; height: 30%; }
+    .medium { width: 50%; height: 50%; }
+    .large { width: 70%; height: 70%; }
+    .red { border-color: red; }
+    .blue { border-color: blue; }
+	.yellow { border-color: gold; }
+	.green  { border-color: green; }
+
+    .selector {
+      display: flex;
+      gap: 10px;
+      margin-top: 2em;
+    }
+    .piece {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 4px solid;
+      cursor: grab;
+    }
+	.piece.small {
+		width: 25px;
+		height: 25px;
+	}
+	.piece.medium {
+		width: 40px;
+		height: 40px;
+	}
+	.piece.large {
+		width: 55px;
+		height: 55px;
+	}
+	
+	.piece.red {
+		border-color: red;
+	}
+	.piece.blue {
+		border-color: blue;
+	}
+	.piece.yellow {
+		border-color: gold;
+	}
+	.piece.green {
+		border-color: green;
+	}
+
+	.alert {
+		background-color: #f8d7da;
+		color: #721c24;
+		padding: 0.7em 1.2em;
+		margin-top: 1em;
+		border: 1px solid #f5c6cb;
+		border-radius: 8px;
+		font-weight: bold;
+		display: none;
+	}
+
+
+    #result {
+      margin-top: 1em;
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #333;
+    }
+    #replay-btn {
+      margin-top: 1em;
+      padding: 0.7em 1.5em;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      background: #27ae60;
+      color: white;
+      cursor: pointer;
+    }
+    #replay-btn:hover {
+      background: #1e8449;
+    }
+  </style>
+</head>
+<body>
+  <h1>Otrio - 2 Joueurs Locaux</h1>
+  <div class="board" id="board"></div>
+  <h2>Joueur <span id="current-player">1</span></h2>
+  <h2>
+	Équipe <span style="color:red">🔴</span>/<span style="color:gold">🟡</span> 
+	vs 
+	<span style="color:blue">🔵</span>/<span style="color:green">🟢</span>
+  </h2>
+  
+
+  <div class="selector" id="player-pieces"></div>
+  <div id="result"></div>
+  <div id="score">Score : 0 - 0</div>
+
+  <button id="replay-btn" onclick="resetGame()">Rejouer</button>
+  <div id="alert" class="alert"></div>
+
+  <p><a href="index.html">← Retour au menu</a></p>
+
+  <script>
+    const board = document.getElementById("board");
+    const selector = document.getElementById("player-pieces");
+    const currentPlayer = document.getElementById("current-player");
+    const result = document.getElementById("result");
+
+    let state, selectedSize;
+	const players = [1, 2, 3, 4];
+    const sizes = ['small', 'medium', 'large'];
+    const sizeOrder = { small: 0, medium: 1, large: 2 };
+    const colors = {1: 'red', 2: 'blue', 3:'yellow', 4:'green'};
+	let scoreLimit = parseInt(localStorage.getItem("scoreLimit") || "3");
+	let scores = { 1: 0, 2: 0 };
+	let currentPlayerIndex = 0;
+	let player = players[currentPlayerIndex];
+	let teamScores = { left: 0, right: 0 };
+	const teamOf = {
+		1: 'left',
+		3: 'left',
+		2: 'right',
+		4: 'right'
+	};
+
+	
+
+
+    function init() {
+      state = Array.from({ length: 9 }, () => []);
+      player = 1;
+      selectedSize = null;
+      board.innerHTML = '';
+      currentPlayer.textContent = player;
+      result.textContent = '';
+	  updateScoreDisplay();
+      drawSelector();
+      createBoard();
+    }
+
+    function drawSelector() {
+      selector.innerHTML = '';
+      sizes.forEach(size => {
+        const piece = document.createElement('div');
+        piece.className = `piece ${size} ${colors[player]}`;
+        piece.dataset.size = size;
+        piece.addEventListener('click', () => {
+			const color = colors[player];
+			if (countPiecesOnBoard(size, color) >= 3) {
+				showAlert(`❌ Vous avez déjà utilisé 3 cercles ${size} de couleur ${color}.`);
+				return;
+			}
+			selectPiece(size);
+		});
+
+        selector.appendChild(piece);
+      });
+    }
+
+    function selectPiece(size) {
+      selectedSize = size;
+    }
+
+    function createBoard() {
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.index = i;
+        cell.addEventListener('click', () => placePiece(i));
+        board.appendChild(cell);
+      }
+      render();
+    }
+	
+	function isBoardFull() {
+		return Array.from(document.querySelectorAll('.cell')).every(cell => {
+			return cell.querySelectorAll('.ring').length >= 3;
+		});
+	}
+
+
+    function placePiece(index) {
+		if (!selectedSize || result.textContent !== '') return;
+		const stack = state[index];
+		if (stack.some(e => e.size === selectedSize)) return alert("Taille déjà utilisée dans cette case.");
+		if (stack.length >= 3) return alert("Case pleine.");
+
+		stack.push({ size: selectedSize, player });
+		render();
+		if (checkVictory(player)) {
+			const team = teamOf[player];
+			teamScores[team]++;
+			updateScoreDisplay();
+			result.textContent = `🎉 Joueur ${player} marque pour l’équipe ${team === 'left' ? '🔴🟡' : '🔵🟢'} ! (Score : ${teamScores.left} - ${teamScores.right})`;
+
+			if (teamScores[team] >= scoreLimit) {
+				result.textContent += `\n🏆 Équipe ${team === 'left' ? '🔴🟡' : '🔵🟢'} gagne la partie !`;
+			} else {
+			setTimeout(() => resetBoard(''), 3000);
+			}
+			return;
+		}
+		if (!checkVictory() && isBoardFull()) {
+			showAlert("🟰 Le plateau est plein, aucune équipe ne marque.");
+			setTimeout(() => resetBoard(''), 3000); // Attends 3s avant reset
+		}
+
+
+		selectedSize = null;
+		currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+		player = players[currentPlayerIndex];
+		currentPlayer.textContent = player;
+		drawSelector();
+    }
+	
+	function resetRound() {
+		state = Array.from({ length: 9 }, () => []);
+		board.innerHTML = '';
+		result.textContent = '';
+		createBoard();
+		drawSelector();
+	}
+	
+	function resetBoard(message = '') {
+		state = Array.from({ length: 9 }, () => []);
+		board.innerHTML = '';
+		result.textContent = message;
+		createBoard();
+		drawSelector();
+	}
+
+
+
+    function render() {
+      [...board.children].forEach((cell, i) => {
+        cell.innerHTML = '';
+        state[i].forEach(item => {
+          const ring = document.createElement('div');
+          ring.className = `ring ${item.size} ${colors[item.player]}`;
+          cell.appendChild(ring);
+        });
+      });
+    }
+	
+	function countPiecesOnBoard(size, color) {
+		const rings = document.querySelectorAll('.ring');
+		let count = 0;
+		rings.forEach(ring => {
+			if (ring.classList.contains(size) && ring.classList.contains(color)) {
+				count++;
+			}
+		});
+		return count;
+	}
+	
+	function showAlert(message) {
+		const alertDiv = document.getElementById('alert');
+		alertDiv.textContent = message;
+		alertDiv.style.display = 'block';
+		setTimeout(() => {
+			alertDiv.style.display = 'none';
+		}, 3000); // disparaît au bout de 3 secondes
+	}
+	
+	function updateScoreDisplay() {
+		document.getElementById("score").textContent = `Score : ${teamScores.left} - ${teamScores.right}`;
+	}
+
+
+
+
+    function checkVictory(p) {
+      const lines = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+
+      for (let line of lines) {
+        const [a,b,c] = line;
+
+        // même taille et même joueur
+        for (let size of sizes) {
+          if ([a,b,c].every(i => state[i].some(o => o.size === size && o.player === p))) {
+            return true;
+          }
+        }
+
+        // 3 tailles différentes, une par case, même joueur
+        const combos = [a,b,c].map(i => {
+          return state[i].find(o => o.player === p);
+        });
+        if (combos.every(x => x)) {
+          const foundSizes = new Set(combos.map(x => x.size));
+          if (foundSizes.size === 3) return true;
+        }
+      }
+
+      // même case, 3 tailles imbriquées, même joueur
+      for (let i = 0; i < 9; i++) {
+        const items = state[i];
+        if (items.length < 3) continue;
+        const owners = items.map(x => x.player);
+        const sizesInCell = items.map(x => x.size);
+        if (owners.every(x => x === p)) {
+          const foundSizes = new Set(sizesInCell);
+          if (foundSizes.size === 3) return true;
+        }
+      }
+
+      return false;
+    }
+
+    function resetGame() {
+      init();
+	  updateScoreDisplay();
+    }
+
+    init();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Otrio Web</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2em;
+      background: #f4f4f4;
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    button {
+      padding: 1em;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      background-color: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Otrio Web</h1>
+  <div class="menu">
+    <button onclick="location.href='rules.html'">📜 Règles du jeu</button>
+    <button onclick="location.href='local.html'">👥 2v2 Local</button>
+    <button onclick="location.href='vsai.html'">🤖 2 Humains vs 2 IA</button>
+    <button onclick="location.href='online.html'">🌐 2v2 Online (à venir)</button>
+	<button onclick="location.href='params.html'">🛠 paramètres du jeu</button>
+
+  </div>
+</body>
+</html>

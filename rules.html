@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Règles du jeu Otrio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background: #fafafa;
+      max-width: 800px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    h1 { text-align: center; }
+    h2 { color: #2c3e50; }
+    .rule-block { margin: 1.5em 0; }
+    .example {
+      border: 1px solid #ccc;
+      padding: 1em;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Règles du jeu Otrio</h1>
+
+  <div class="rule-block">
+    <h2>📘 Lexique</h2>
+    <ul>
+      <li><strong>P</strong> : Petit</li>
+      <li><strong>M</strong> : Moyen</li>
+      <li><strong>G</strong> : Grand</li>
+      <li><strong>C</strong> : Cercle</li>
+      <li><strong>R</strong> : Rouge</li>
+      <li><strong>B</strong> : Bleu</li>
+      <li><strong>J</strong> : Jaune</li>
+      <li><strong>V</strong> : Vert</li>
+      <li><strong>A1 → C3</strong> : désigne les 9 cases du plateau en lignes (A à C) et colonnes (1 à 3)</li>
+    </ul>
+  </div>
+
+  <div class="rule-block">
+    <h2>🎯 Objectif</h2>
+    <p>Être le premier joueur à aligner une combinaison gagnante avec ses pièces de couleur.</p>
+  </div>
+
+  <div class="rule-block">
+    <h2>🧩 Contenu du jeu</h2>
+    <ul>
+      <li>Un plateau 3x3 (9 emplacements)</li>
+      <li>Des pièces de trois tailles (petit, moyen, grand) pour chaque joueur</li>
+      <li>Chaque joueur a ses pièces dans une couleur distincte</li>
+    </ul>
+  </div>
+
+  <div class="rule-block">
+    <h2>✅ Conditions de victoire</h2>
+    <div class="example">
+      <ul>
+        <li>3 cercles de même taille alignés (même joueur si 1v1 avec 2 couleurs, ex : A1 GCB, A2 GCR, A3 GCB) / de même couleur si 2v2 à 4 joueurs.</li>
+        <li>3 tailles différentes en crescendo alignées (ex : A1 PCB, B2 MCB, C3 GCR).</li>
+        <li>3 tailles différentes emboîtées dans la même case (ex : A1 PCB, A1 MCB, A1 GCR).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule-block">
+    <h2>🔄 Déroulement d'une partie</h2>
+    <ol>
+      <li>Chaque joueur joue à tour de rôle.</li>
+      <li>À son tour, un joueur choisit une de ses pièces (disponible) et la place sur le plateau.</li>
+      <li>Un emplacement peut accueillir jusqu'à 3 pièces (une de chaque taille), mais <strong>une taille ne peut apparaître qu'une fois par case</strong>.</li>
+      <li>Le premier joueur à réaliser une condition de victoire gagne la partie.</li>
+    </ol>
+  </div>
+
+  <div class="rule-block">
+    <h2>📎 Remarques</h2>
+    <ul>
+      <li>Les pièces doivent être visibles (pas de recouvrement entre tailles identiques).</li>
+      <li>Un joueur ne peut pas jouer une pièce d’une taille déjà présente dans la case ciblée.</li>
+    </ul>
+  </div>
+
+  <p style="text-align: center;"><a href="index.html">← Retour au menu</a></p>
+</body>
+</html>

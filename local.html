@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Otrio - Mode Local</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 10px;
+    }
+    .cell {
+      background: white;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+    }
+    .ring {
+      position: absolute;
+      border: 4px solid;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      left: 50%;
+      top: 50%;
+    }
+    .small { width: 30%; height: 30%; }
+    .medium { width: 50%; height: 50%; }
+    .large { width: 70%; height: 70%; }
+    .red { border-color: red; }
+    .blue { border-color: blue; }
+    .selector {
+      display: flex;
+      gap: 10px;
+      margin-top: 2em;
+    }
+    .piece {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 4px solid;
+      cursor: grab;
+    }
+  </style>
+</head>
+<body>
+  <h1>Otrio - 2 Joueurs Locaux</h1>
+  <h2>(condition de victoire not set)</h2>
+  <div class="board" id="board"></div>
+  <h2>Joueur <span id="current-player">1</span></h2>
+  <div class="selector" id="player-pieces"></div>
+  <p><a href="index.html">← Retour au menu</a></p>
+
+  <script>
+    const board = document.getElementById("board");
+    const selector = document.getElementById("player-pieces");
+    const currentPlayer = document.getElementById("current-player");
+
+    let state = Array.from({ length: 9 }, () => []);
+    let player = 1;
+
+    const sizes = ['small', 'medium', 'large'];
+    const colors = {1: 'red', 2: 'blue'};
+
+    function drawSelector() {
+      selector.innerHTML = '';
+      sizes.forEach(size => {
+        const piece = document.createElement('div');
+        piece.className = `piece ${size} ${colors[player]}`;
+        piece.dataset.size = size;
+        piece.addEventListener('click', () => selectPiece(size));
+        selector.appendChild(piece);
+      });
+    }
+
+    let selectedSize = null;
+
+    function selectPiece(size) {
+      selectedSize = size;
+    }
+
+    function createBoard() {
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.index = i;
+        cell.addEventListener('click', () => placePiece(i));
+        board.appendChild(cell);
+      }
+    }
+
+    function placePiece(index) {
+      if (!selectedSize) return;
+      const stack = state[index];
+      if (stack.some(e => e.size === selectedSize)) return alert("Taille déjà utilisée dans cette case.");
+      if (stack.length >= 3) return alert("Case pleine.");
+
+      stack.push({ size: selectedSize, player });
+      render();
+      selectedSize = null;
+      player = 3 - player;
+      currentPlayer.textContent = player;
+      drawSelector();
+    }
+
+    function render() {
+      [...board.children].forEach((cell, i) => {
+        cell.innerHTML = '';
+        state[i].forEach(item => {
+          const ring = document.createElement('div');
+          ring.className = `ring ${item.size} ${colors[item.player]}`;
+          cell.appendChild(ring);
+        });
+      });
+    }
+
+    createBoard();
+    drawSelector();
+  </script>
+</body>
+</html>
