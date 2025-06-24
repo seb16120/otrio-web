@@ -35,10 +35,18 @@
     <option value="5">5 points</option>
   </select>
   <br>
-  <button onclick="startGame()">Commencer la partie</button>
+  <button onclick="startGameLocal()">Commencer contre joueurs</button>
+  <br>
+  <button onclick="startGameAi()">Commencer contre AIs</button>
+  <p><a href="index.html">← Retour au menu</a></p>
 
   <script>
-    function startGame() {
+    function startGameLocal() {
+      const limit = document.getElementById('scoreLimit').value;
+      localStorage.setItem('scoreLimit', limit);
+      window.location.href = 'local.html';
+    }
+	function startGameAi() {
       const limit = document.getElementById('scoreLimit').value;
       localStorage.setItem('scoreLimit', limit);
       window.location.href = 'vsai.html';
