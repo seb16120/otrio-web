@@ -50,7 +50,7 @@
     <h2>🧩 Contenu du jeu</h2>
     <ul>
       <li>Un plateau 3x3 (9 emplacements)</li>
-      <li>Des pièces de trois tailles (petit, moyen, grand) pour chaque joueur</li>
+      <li>3 * 3 pièces de trois tailles (petit, moyen, grand) pour chaque joueur</li>
       <li>Chaque joueur a ses pièces dans une couleur distincte</li>
     </ul>
   </div>
@@ -72,15 +72,16 @@
       <li>Chaque joueur joue à tour de rôle.</li>
       <li>À son tour, un joueur choisit une de ses pièces (disponible) et la place sur le plateau.</li>
       <li>Un emplacement peut accueillir jusqu'à 3 pièces (une de chaque taille), mais <strong>une taille ne peut apparaître qu'une fois par case</strong>.</li>
-      <li>Le premier joueur à réaliser une condition de victoire gagne la partie.</li>
+      <li>Le premier joueur à réaliser une condition de victoire gagne le round et le 1er joueur à avoir le nombre de pts cible gagne le match.</li>
     </ol>
+	<p> N.B : le board reset automatiquement au bout de 3 sec après une condition de victoire validée ou si le board est plein</p>
   </div>
 
   <div class="rule-block">
     <h2>📎 Remarques</h2>
     <ul>
       <li>Les pièces doivent être visibles (pas de recouvrement entre tailles identiques).</li>
-      <li>Un joueur ne peut pas jouer une pièce d’une taille déjà présente dans la case ciblée.</li>
+      <li>Autrement dit un joueur ne peut pas jouer une pièce d’une taille déjà présente dans la case ciblée.</li>
     </ul>
   </div>
 
